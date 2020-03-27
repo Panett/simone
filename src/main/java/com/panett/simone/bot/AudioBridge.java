@@ -40,10 +40,9 @@ public class AudioBridge implements AudioReceiveHandler {
         bridgeQueue.add(combinedAudio.getAudioData(volume));
     }
 
-
-    //TODO: vedere guava RateLimiter
     @Override
     public void handleUserAudio(UserAudio userAudio) {
+        System.out.println(simone.getTalkingSecs());
         if(userAudio.getUser().getId().equals(panettId)) {
             Stopwatch talkingStopwatch = simone.getTalkingStopwatch();
             if(!talkingStopwatch.isRunning()) talkingStopwatch.start();
