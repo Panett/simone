@@ -1,23 +1,25 @@
 package com.panett.simone.bot;
 
-import com.panett.simone.config.JDAConfig;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.audio.AudioReceiveHandler;
 import net.dv8tion.jda.api.audio.CombinedAudio;
 import net.dv8tion.jda.api.audio.UserAudio;
+import net.dv8tion.jda.api.entities.Guild;
+import org.springframework.util.StopWatch;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AudioBridge implements AudioReceiveHandler {
 
-    private JDA jda;
+    private Simone simone;
+    private Guild guild;
     private String panettId = "169531615528222720";
 
     double volume = 1.0;
     ConcurrentLinkedQueue<byte[]> bridgeQueue = new ConcurrentLinkedQueue<>();
 
-    public AudioBridge(JDA jda) {
-        this.jda = jda;
+    public AudioBridge(Guild guild) {
+        this.guild = guild;
+        this.simone = new Simone();
     }
 
     @Override
@@ -40,7 +42,20 @@ public class AudioBridge implements AudioReceiveHandler {
     @Override
     public void handleUserAudio(UserAudio userAudio) {
         if(userAudio.getUser().getId().equals(panettId)) {
-            jda.getGuildById(JDAConfig.guildId).getTextChannels().get(0).sendMessage("sei baned").submit();
+            System.out.println("stai a parla");
+
+            if(!simone.isTalking()) {
+                simone.setTalking(true);
+                //simone.getStopwatch().start();
+                StopWatch stopWatch = new StopWatch();
+                stopWatch.start();
+            } else {
+                long lastTaskTimeMillis = simone.getStopwatch().getLastTaskTimeMillis();
+                System.out.println(lastTaskTimeMillis);
+            }
+
+        } else {
+            simone.setTalking(false);
         }
     }
 
