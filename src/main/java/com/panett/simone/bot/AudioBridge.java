@@ -4,9 +4,11 @@ import net.dv8tion.jda.api.audio.AudioReceiveHandler;
 import net.dv8tion.jda.api.audio.CombinedAudio;
 import net.dv8tion.jda.api.audio.UserAudio;
 import net.dv8tion.jda.api.entities.Guild;
-import org.springframework.util.StopWatch;
+import com.google.common.base.Stopwatch;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class AudioBridge implements AudioReceiveHandler {
 
@@ -20,6 +22,7 @@ public class AudioBridge implements AudioReceiveHandler {
     public AudioBridge(Guild guild) {
         this.guild = guild;
         this.simone = new Simone();
+        simone.addObserver(new SimoneObserver(simone));
     }
 
     @Override
@@ -42,20 +45,9 @@ public class AudioBridge implements AudioReceiveHandler {
     @Override
     public void handleUserAudio(UserAudio userAudio) {
         if(userAudio.getUser().getId().equals(panettId)) {
-            System.out.println("stai a parla");
-
-            if(!simone.isTalking()) {
-                simone.setTalking(true);
-                //simone.getStopwatch().start();
-                StopWatch stopWatch = new StopWatch();
-                stopWatch.start();
-            } else {
-                long lastTaskTimeMillis = simone.getStopwatch().getLastTaskTimeMillis();
-                System.out.println(lastTaskTimeMillis);
-            }
-
-        } else {
-            simone.setTalking(false);
+            Stopwatch talkingStopwatch = simone.getTalkingStopwatch();
+            if(!talkingStopwatch.isRunning()) talkingStopwatch.start();
+            else simone.setTalkingSecs(talkingStopwatch.elapsed(SECONDS));
         }
     }
 
