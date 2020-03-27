@@ -2,10 +2,14 @@ package com.panett.simone.bot;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SimoneObserver implements Observer {
 
     private Simone simone;
+    Timer timer;
+    boolean timerOn = false;
 
     public SimoneObserver(Simone simone) {
         this.simone = simone;
@@ -13,10 +17,24 @@ public class SimoneObserver implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if(o == simone) {
-            long talkingSecs = ((Simone) o).getTalkingSecs();
-            System.out.println("Stai parlando da " + talkingSecs + " secondi");
-            //controllare da quanto non parlo
+        if (o == simone) {
+
+            if (timerOn) {
+                timer.cancel();
+                timerOn = false;
+            } else {
+                timer = new Timer();
+                TimerTask resetSimoneTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        simone.setTalking(false);
+                        simone.getTalkingStopwatch().reset();
+                        simone.setTalkingSecs(0);
+                    }
+                };
+                timer.schedule(resetSimoneTask,3*1000);
+                timerOn = true;
+            }
         }
     }
 }
