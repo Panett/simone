@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.audio.CombinedAudio;
 import net.dv8tion.jda.api.audio.UserAudio;
 import net.dv8tion.jda.api.entities.Guild;
 import com.google.common.base.Stopwatch;
+import net.dv8tion.jda.api.entities.User;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -14,14 +15,15 @@ public class AudioBridge implements AudioReceiveHandler {
 
     private Simone simone;
     private Guild guild;
-    private String panettId = "169531615528222720";
+    private User user;
 
     double volume = 1.0;
     ConcurrentLinkedQueue<byte[]> bridgeQueue = new ConcurrentLinkedQueue<>();
 
-    public AudioBridge(Guild guild) {
+    public AudioBridge(Guild guild, User user) {
         this.guild = guild;
         this.simone = new Simone();
+        this.user = user;
         simone.addObserver(new SimoneObserver(simone));
     }
 
@@ -43,7 +45,7 @@ public class AudioBridge implements AudioReceiveHandler {
     @Override
     public void handleUserAudio(UserAudio userAudio) {
         System.out.println(simone.getTalkingSecs());
-        if(userAudio.getUser().getId().equals(panettId)) {
+        if(userAudio.getUser().equals(user)) {
             Stopwatch talkingStopwatch = simone.getTalkingStopwatch();
             if(!talkingStopwatch.isRunning()) talkingStopwatch.start();
             else simone.setTalkingSecs(talkingStopwatch.elapsed(SECONDS));
