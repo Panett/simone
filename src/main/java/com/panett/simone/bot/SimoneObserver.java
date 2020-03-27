@@ -22,6 +22,7 @@ public class SimoneObserver implements Observer {
             if (timerOn) {
                 timer.cancel();
                 timerOn = false;
+                // if(simone.getTalkingSecs() > 5) playMusic();
             } else {
                 timer = new Timer();
                 TimerTask resetSimoneTask = new TimerTask() {
@@ -30,6 +31,7 @@ public class SimoneObserver implements Observer {
                         simone.setTalking(false);
                         simone.getTalkingStopwatch().reset();
                         simone.setTalkingSecs(0);
+                        // stopMusic();
                     }
                 };
                 timer.schedule(resetSimoneTask,3*1000);
