@@ -17,6 +17,9 @@ import javax.security.auth.login.LoginException;
 @Log4j2
 public class JDAConfig {
 
+    @Value("${token}")
+    String token;
+
     @Value("${guild.id}")
     String guildId;
 
@@ -29,7 +32,6 @@ public class JDAConfig {
     @Bean
     public JDA jda() {
         try {
-            String token = "Njg5OTQyNDg1OTAzOTk5MTA4.XnKVzg.mEgL5pZwlE8fSVccJSLqdjm4AD0";
             JDA jda = new JDABuilder(token).build().awaitReady();
             Guild guild = jda.getGuildById(guildId);
             User user = jda.getUserById(userId);
