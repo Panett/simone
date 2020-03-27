@@ -28,7 +28,6 @@ public class SimoneObserver implements Observer {
                 TimerTask resetSimoneTask = new TimerTask() {
                     @Override
                     public void run() {
-                        simone.setTalking(false);
                         simone.getTalkingStopwatch().reset();
                         simone.setTalkingSecs(0);
                         // stopMusic();
